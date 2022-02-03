@@ -76,7 +76,6 @@ class OnDoneTask(object):
 def select_view_to_close(
     window : sublime.Window,
     views : List[sublime.View],
-    tabs_limit : int,
     task : OnDoneTask) -> None:
     def on_select(index):
         if index != -1:
@@ -104,13 +103,13 @@ def select_view_to_close(
         make_item(view.file_name() or 'Untitled', tstr)
         for view, tstr in views_with_access_time
     ]
+    state = f'{len(views)} > {settings.tabs_limit}'
     window.run_command('hide_overlay')
     window.show_quick_panel(
         items,
         on_select=on_select,
         on_highlight=on_highlight,
-        placeholder=f"Tabs are too crowded ({len(views)} > {tabs_limit}), " +
-                    f"select one to close")
+        placeholder=f"Tabs are too crowded ({state}), select one to close")
 
 
 def check_window_views_number(window : sublime.Window, task : OnDoneTask):
@@ -122,18 +121,15 @@ def check_window_views_number(window : sublime.Window, task : OnDoneTask):
         window.run_command('close_tabs_to_limit')
     else:
         task.set()
-        select_view_to_close(window, views, settings.tabs_limit, task)
+        select_view_to_close(window, views, task)
 
 
 def access_view_and_check_views_number(view : sublime.View) -> None:
     def run():
         update_access_time_of_view(view)
-        def restore_viewport():
-            window.focus_view(view)
-
         window = sublime.active_window()
-        task = OnDoneTask(restore_viewport)
-        check_window_views_number(window, task)
+        ondone = OnDoneTask(lambda: window.focus_view(view))
+        check_window_views_number(window, ondone)
 
     sublime.set_timeout(run)
 
