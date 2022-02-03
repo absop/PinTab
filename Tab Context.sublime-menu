@@ -1,6 +1,12 @@
 [
+	{ "caption": "-" },
 	{
 		"command": "pin_tab",
 		"args": { "group": -1, "index": -1 }
-	}
+	},
+	{
+		"command": "close_tabs_to_limit",
+		"args": { "group": -1, "index": -1 }
+	},
+	{ "caption": "-" }
 ]

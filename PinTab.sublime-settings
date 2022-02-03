@@ -1,3 +1,13 @@
 {
-    "tabs_limit": 15
+    // The maximum number of tabs a window can hold
+    "tabs_limit": 15,
+
+    // When the number of tabs in a window exceeds the limit,
+    // automatically close the oldest tab in the window,
+    // otherwise, pop up quick panel to select view to close
+    "auto_close_oldest_tab": false,
+
+    // Set to false if you don't want to execute the check when
+    // new a view
+    "check_when_new_view": true
 }
