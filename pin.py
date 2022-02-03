@@ -8,6 +8,7 @@ import sublime_plugin
 
 KEY_VIEW_IS_TRANSIENT = 'pintab.view_is_transient'
 KEY_VIEW_ACCESS_TIME = 'pintab.view_access_time'
+KEY_VIEW_IS_PINNED = 'pintab.view_is_pinned'
 
 class settings:
     on_change_key = 'pintab.reload_settings'
@@ -141,7 +142,7 @@ class TabsGuardListener(sublime_plugin.EventListener):
     def on_window_command(self, window, command, args):
         # print("on_window_command", command, args)
         if command in {'close', 'close_transient'}:
-            if window.active_view().settings().get('pinned_tab', False):
+            if window.active_view().settings().get(KEY_VIEW_IS_PINNED, False):
                 opt = sublime.yes_no_cancel_dialog(
                     'You are trying to close a pinned tab',
                     yes_title='Switch to next',
@@ -193,16 +194,16 @@ class PinTabCommand(sublime_plugin.WindowCommand):
     def run(self, group, index):
         view = sublime.active_window().views_in_group(group)[index]
         settings = view.settings()
-        if settings.get('pinned_tab', False):
-            settings.set('pinned_tab', False)
+        if settings.get(KEY_VIEW_IS_PINNED, False):
+            settings.set(KEY_VIEW_IS_PINNED, False)
             print('PinTab: unpinned file:', view.file_name())
         else:
-            settings.set('pinned_tab', True)
+            settings.set(KEY_VIEW_IS_PINNED, True)
             print('PinTab: pinned file:', view.file_name())
 
     def description(self, group, index):
         view = sublime.active_window().views_in_group(group)[index]
-        if view.settings().get('pinned_tab', False):
+        if view.settings().get(KEY_VIEW_IS_PINNED, False):
             return 'Unpin This Tab'
         else:
             return 'Pin This Tab'
@@ -212,7 +213,7 @@ def _strtime():
     return time.strftime("%m/%d %H:%M:%S")
 
 def _is_pinned_view(view):
-    return view.settings().get('pinned_tab', False)
+    return view.settings().get(KEY_VIEW_IS_PINNED, False)
 
 def _is_normal_view(view : sublime.View):
     return view.element() is None
