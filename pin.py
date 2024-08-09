@@ -10,6 +10,7 @@ KEY_VIEW_IS_TRANSIENT = 'pintab.view_is_transient'
 KEY_VIEW_ACCESS_TIME = 'pintab.view_access_time'
 KEY_VIEW_IS_PINNED = 'pintab.view_is_pinned'
 
+
 class settings:
     on_change_key = 'pintab.reload_settings'
     name = 'PinTab.sublime-settings'
@@ -35,10 +36,10 @@ class settings:
         cls.obj.clear_on_change(cls.on_change_key)
 
 
-def plugin_load():
+def plugin_loaded():
     sublime.set_timeout_async(settings.load)
 
-def plugin_unload():
+def plugin_unloaded():
     settings.clear()
 
 
@@ -125,6 +126,8 @@ def check_window_views_number(window : sublime.Window, task : OnDoneTask):
 
 
 def access_view_and_check_views_number(view : sublime.View) -> None:
+    if settings.tabs_limit == 0:
+        return
     def run():
         update_access_time_of_view(view)
         window = sublime.active_window()
